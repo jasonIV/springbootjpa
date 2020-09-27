@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 
@@ -33,7 +35,7 @@ public class ProductEntity extends StatusEntity{
     private Integer unitsInStock;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id")
     private ProductCategoryEntity productCategoryEntity;
 
@@ -44,19 +46,16 @@ public class ProductEntity extends StatusEntity{
     )
     private Long categoryId;
 
-    @ManyToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "supplier_id")
-    private SupplierEntity supplierEntity;
+    @ManyToOne( fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "company_id")
+    private CompanyEntity companyEntity;
 
     @Column(
-            name = "supplier_Id",
+            name = "company_Id",
             insertable = false,
             updatable = false
     )
-    private Long supplierId;
-
-    @Column( name = "image")
-    private String image;
+    private Long companyId;
 
     @Column( name = "base_price")
     private double basePrice;

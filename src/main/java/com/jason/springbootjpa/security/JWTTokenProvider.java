@@ -3,12 +3,9 @@ package com.jason.springbootjpa.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 
 @Component
@@ -16,11 +13,11 @@ public class JWTTokenProvider {
 
     private String secretKey = "secretKey";
 
-    public String createToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
+    public String createToken(String username, String roles) {
+        Claims claims = Jwts.claims().setSubject(username);
+        claims.put("roles", roles);
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
@@ -32,7 +29,7 @@ public class JWTTokenProvider {
        return claimsResolver.apply(claims);
     }
 
-    private Claims extractAllClaims(String token) {
+    public Claims extractAllClaims(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
     }
 
@@ -48,9 +45,8 @@ public class JWTTokenProvider {
        return extractExpiration(token).before(new Date());
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails){
-       final String username = extractUsername(token);
-       return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    public Boolean validateToken(String token){
+       return !isTokenExpired(token);
     }
 
 }

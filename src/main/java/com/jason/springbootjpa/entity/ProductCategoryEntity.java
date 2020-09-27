@@ -16,7 +16,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductCategoryEntity extends StatusEntity{
+public class ProductCategoryEntity extends BaseEntity {
 
     private final static long serialVersionUID = 1L;
 

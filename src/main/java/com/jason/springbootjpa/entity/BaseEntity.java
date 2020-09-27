@@ -23,12 +23,8 @@ public class BaseEntity implements Serializable {
     @LastModifiedDate
     @Basic
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "last_update_date", nullable = false)
+    @Column(name = "last_update_date", nullable = true)
     private Date lastUpdateDate;
-
-    @LastModifiedBy
-    @Column(name = "last_update_by")
-    private String lastUpdateBy;
 
     @CreatedDate
     @Basic
@@ -36,8 +32,11 @@ public class BaseEntity implements Serializable {
     @Column(name = "created_date")
     private Date createdDate;
 
-    @CreatedBy
-    @Column(name = "created_by")
-    private String createdBy;
+    public void setDefaultData() {
+        this.setLastUpdateDate(new Date());
+        if(this.getCreatedDate() == null) {
+            this.setCreatedDate(new Date());
+        }
+    }
 
 }

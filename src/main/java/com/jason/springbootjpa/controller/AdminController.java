@@ -8,13 +8,13 @@ import com.jason.springbootjpa.repository.AdminRoleRepository;
 import com.jason.springbootjpa.controller.request.model.AdminRegisterRequest;
 import com.jason.springbootjpa.controller.request.model.AuthenticationRequest;
 import com.jason.springbootjpa.security.JWTTokenProvider;
-import com.jason.springbootjpa.security.UserDetailServiceImpl;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -44,7 +42,7 @@ public class AdminController {
    JWTTokenProvider jwtTokenProvider;
 
    @Autowired
-   private UserDetailServiceImpl userDetailService;
+   private UserDetailsService userDetailService;
 
    @PostMapping("/register")
    public ResponseEntity<Object> signUp(@RequestBody AdminRegisterRequest user) throws Exception {
@@ -60,10 +58,7 @@ public class AdminController {
          admin.setRole(role);
          admin.setPassword(encoder.encode(user.getPassword()));
          admin.setPhone(user.getPhone());
-         admin.setLastUpdateBy(user.getUsername());
-         admin.setLastUpdateDate(new Date());
-         admin.setCreatedBy(user.getUsername());
-         admin.setCreatedDate(new Date());
+         admin.setDefaultData();
          adminRepository.save(admin);
          return ResponseEntity.ok(new Response("Admin account successfully registered."));
       }
@@ -72,8 +67,7 @@ public class AdminController {
    @PostMapping("/login")
    public ResponseEntity<Object> logIn(@RequestBody AuthenticationRequest request) throws Exception {
       authenticationManager.authenticate(new UsernamePasswordAuthenticationToken("admin:" + request.getUsername(), request.getPassword()));
-      UserDetails userDetails = userDetailService.loadUserByUsername("admin:" + request.getUsername());
-      String token = jwtTokenProvider.createToken(userDetails);
+      String token = jwtTokenProvider.createToken("admin:" + request.getUsername(), "ADMIN");
       return ResponseEntity.ok(new Response(token));
    }
 

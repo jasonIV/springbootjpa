@@ -10,12 +10,12 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "supplier")
+@Table(name = "company")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SupplierEntity extends StatusEntity{
+public class CompanyEntity extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -24,8 +24,8 @@ public class SupplierEntity extends StatusEntity{
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "company")
+    private String company;
 
     @Column(name = "address")
     private String address;
@@ -36,16 +36,10 @@ public class SupplierEntity extends StatusEntity{
     @Column(name = "email")
     private String email;
 
-    @Column(name = "city")
-    private String city;
-
-    @Column(name = "state")
-    private String state;
-
     @JsonIgnore
     @OneToMany(
             fetch = FetchType.EAGER,
-            mappedBy = "supplierEntity",
+            mappedBy = "companyEntity",
             cascade = CascadeType.ALL
     )
     private List<ProductEntity> productList;

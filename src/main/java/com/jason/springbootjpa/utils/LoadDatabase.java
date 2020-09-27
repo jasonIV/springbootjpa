@@ -17,7 +17,7 @@ class LoadDatabase {
     CommandLineRunner initDatabase(AdminRoleRepository repository) {
 
         return args -> {
-            log.info("Preloading " + repository.save(new AdminRole(1L, "admin")));
+            log.info("Preloading " + repository.save(new AdminRole(1L, "ADMIN")));
         };
     }
 }

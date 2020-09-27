@@ -47,8 +47,7 @@ public class BuyerController {
        buyer.setEmail(request.getEmail());
        buyer.setDeliveryAddress(request.getDeliveryAddress());
        buyer.setShopName(request.getShopName());
-       buyer.setCreatedBy(request.getUsername());
-       buyer.setLastUpdateBy(request.getUsername());
+       buyer.setDefaultData();
        buyer.setCreatedDate(new Date());
        buyer.setLastUpdateDate(new Date());
        buyerRepository.save(buyer);
@@ -58,8 +57,7 @@ public class BuyerController {
     @PostMapping("/login")
     public ResponseEntity<Object> loginBuyer(@RequestBody AuthenticationRequest request) throws Exception {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken("buyer:" + request.getUsername(), request.getPassword()));
-        UserDetails userDetails = userDetailService.loadUserByUsername("buyer:" + request.getUsername());
-        String token = jwtTokenProvider.createToken(userDetails);
+        String token = jwtTokenProvider.createToken("buyer:" + request.getUsername(), "BUYER");
         return ResponseEntity.ok(new Response(token));
     }
 }

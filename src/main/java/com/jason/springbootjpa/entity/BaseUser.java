@@ -14,7 +14,7 @@ import javax.persistence.MappedSuperclass;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BaseUser extends StatusEntity{
+public class BaseUser extends BaseEntity{
     private static final long serialVersionUID = 7801663576677865267L;
 
     @Column(name = "username", length = 50, unique = true)
