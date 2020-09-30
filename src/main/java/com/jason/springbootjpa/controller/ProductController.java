@@ -13,6 +13,8 @@ import com.jason.springbootjpa.repository.ProductRepository;
 import javassist.NotFoundException;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -55,9 +57,9 @@ public class ProductController {
 
     @GetMapping("/getAllProductsWithCategory")
     @ResponseBody
-    public List<ProductListResponse> getAllProductsWithCategory() {
+    public List<ProductListResponse> getAllProductsWithCategory(Pageable pageable) {
         List<ProductListResponse> responses = new ArrayList<>();
-        Iterator categoryIterator = categoryRepository.findAll().iterator();
+        Iterator categoryIterator = categoryRepository.findAll(pageable).iterator();
         while(categoryIterator.hasNext()) {
             ProductCategoryEntity categoryEntity = (ProductCategoryEntity)categoryIterator.next();
             ProductListResponse response = new ProductListResponse();
@@ -70,9 +72,8 @@ public class ProductController {
 
     @GetMapping("/getAllProductsWithStatus")
     @ResponseBody
-    public List<ProductEntity> getAllProductsWithStatus(@RequestParam("status") Status status) {
-        List<ProductEntity> data = productRepository.findByStatus(status);
-        return data;
+    public Page<ProductEntity> getAllProductsWithStatus(@RequestParam("status") Status status, Pageable pageable) {
+        return productRepository.findByStatus(status, pageable);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

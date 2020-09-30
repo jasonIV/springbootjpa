@@ -1,9 +1,7 @@
 package com.jason.springbootjpa.entity;
 
 import lombok.*;
-import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -23,7 +21,7 @@ public class BaseEntity implements Serializable {
     @LastModifiedDate
     @Basic
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "last_update_date", nullable = true)
+    @Column(name = "last_update_date")
     private Date lastUpdateDate;
 
     @CreatedDate
