@@ -11,6 +11,7 @@ import com.jason.springbootjpa.repository.CompanyRepository;
 import com.jason.springbootjpa.repository.ProductCategoryRepository;
 import com.jason.springbootjpa.repository.ProductRepository;
 import javassist.NotFoundException;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,12 +21,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/product")
 @NoArgsConstructor
+@AllArgsConstructor
 public class ProductController {
 
     @Autowired
@@ -40,10 +42,14 @@ public class ProductController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/new")
     @ResponseBody
-    public ResponseEntity<?> newProduct(@RequestBody ProductRequest request) {
+    public ResponseEntity<?> newProduct(@RequestBody ProductRequest request) throws Exception {
        ProductEntity product = new ProductEntity();
-       ProductCategoryEntity category = categoryRepository.findById(request.getCategoryId()).get();
-       CompanyEntity company = companyRepository.findById(request.getCompanyId()).get();
+       Optional<ProductCategoryEntity> opCategory = categoryRepository.findById(request.getCategoryId());
+       Optional<CompanyEntity> opCompany = companyRepository.findById(request.getCompanyId());
+       if (opCategory.isEmpty()) throw new Exception("Category does not exist.");
+       if (opCompany.isEmpty()) throw new Exception("Company does not exist.");
+       ProductCategoryEntity category = opCategory.get();
+       CompanyEntity company = opCompany.get();
        product.setProduct(request.getProduct());
        product.setDescription(request.getDescription());
        product.setBasePrice(request.getBasePrice());
@@ -59,12 +65,12 @@ public class ProductController {
     @ResponseBody
     public List<ProductListResponse> getAllProductsWithCategory(Pageable pageable) {
         List<ProductListResponse> responses = new ArrayList<>();
-        Iterator categoryIterator = categoryRepository.findAll(pageable).iterator();
-        while(categoryIterator.hasNext()) {
-            ProductCategoryEntity categoryEntity = (ProductCategoryEntity)categoryIterator.next();
+        List<ProductCategoryEntity> categories = categoryRepository.findAll();
+        for(ProductCategoryEntity element: categories) {
             ProductListResponse response = new ProductListResponse();
-            response.setCategoryName(categoryEntity.getCategory());
-            response.setData(categoryEntity.getProductList());
+            Page<ProductEntity> products = productRepository.findByCategoryId(element.getId(), pageable);
+            response.setCategoryName(element.getCategory());
+            response.setData(products);
             responses.add(response);
         }
         return responses;
@@ -83,14 +89,16 @@ public class ProductController {
         ProductEntity entity = productRepository.getOne(productId);
         entity.setStatus(status);
         entity.setDefaultData();
-        return (ProductEntity)this.productRepository.save(entity);
+        return this.productRepository.save(entity);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/edit")
     @ResponseBody
     public ProductEntity editProduct(@RequestParam("product_id") Long productId, @RequestBody ProductRequest request) throws NotFoundException {
-        ProductEntity entity = productRepository.getOne(productId);
+        Optional<ProductEntity> opEntity = productRepository.findById(productId);
+        if(opEntity.isEmpty()) throw new NotFoundException("Product does not exist");
+        ProductEntity entity = opEntity.get();
         entity.setProduct(request.getProduct());
         entity.setDescription(request.getDescription());
         entity.setBasePrice(request.getBasePrice());
@@ -98,19 +106,20 @@ public class ProductController {
         entity.setCategoryId(request.getCategoryId());
         entity.setCompanyId(request.getCompanyId());
         entity.setDefaultData();
-        return (ProductEntity)this.productRepository.save(entity);
+        return this.productRepository.save(entity);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/delete")
     @ResponseBody
     public ProductEntity deleteProduct(@RequestParam("product_id") Long productId) throws NotFoundException {
-        ProductEntity entity = productRepository.getOne(productId);
-        entity.setStatus(Status.O);
+        Optional<ProductEntity> opEntity = productRepository.findById(productId);
+        if(opEntity.isEmpty()) throw new NotFoundException("Product does not exist.");
+        ProductEntity entity = opEntity.get();
+        entity.setStatus(Status.outOfStock);
         entity.setUnitsInStock(0);
         entity.setDefaultData();
-        return (ProductEntity)this.productRepository.save(entity);
+        return this.productRepository.save(entity);
     }
-
 
 }

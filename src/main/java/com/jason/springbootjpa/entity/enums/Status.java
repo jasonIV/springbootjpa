@@ -1,9 +1,13 @@
 package com.jason.springbootjpa.entity.enums;
 
 public enum Status {
-    A,
-    O;
+    available,
+    outOfStock,
+    pending,
+    processing,
+    shipped,
+    received;
 
-    private Status(){
+    Status(){
     }
 }

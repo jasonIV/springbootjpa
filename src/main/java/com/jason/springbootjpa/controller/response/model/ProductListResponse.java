@@ -16,6 +16,6 @@ import java.util.List;
 public class ProductListResponse {
 
     private String categoryName;
-    private List<ProductEntity> data;
+    private Page<ProductEntity> data;
 
 }

@@ -3,14 +3,12 @@ package com.jason.springbootjpa.entity;
 import com.jason.springbootjpa.entity.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @MappedSuperclass
 @FilterDef(
@@ -36,7 +34,7 @@ public class StatusEntity extends BaseEntity {
         private Status status;
 
         public StatusEntity(){
-                this.status = Status.A;
+                this.status = Status.available;
         }
 
 }
