@@ -4,7 +4,7 @@ Java Spring Boot API with gradle.
 
 # version
 
-- 0.0.4
+- 0.0.5
 
 # changelog
 
@@ -24,6 +24,9 @@ Java Spring Boot API with gradle.
 
 > Improved some controller issues
 
+- 0.0.5
+
+> Fixed order controller issues
 
 # author
 

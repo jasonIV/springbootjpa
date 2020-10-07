@@ -60,9 +60,12 @@ public class OrderController {
         double totalAmount = 0.0;
         for(OrderItemRequest element: products) {
             Optional<ProductEntity> opProduct = productRepository.findById(element.getProductId());
-            if(opProduct.isEmpty()) throw new Exception("Product does not exist");
+            if (opProduct.isEmpty()) throw new Exception("Product does not exist");
             ProductEntity product = opProduct.get();
-            if(product.getUnitsInStock() < element.getQuantity()) throw new Exception("Product out of stock.");
+            if (product.getUnitsInStock() < element.getQuantity()) throw new Exception("Product " + product.getProduct() + " out of stock.");
+        }
+        for(OrderItemRequest element: products){
+            ProductEntity product = productRepository.getOne(element.getProductId());
             OrderItemEntity orderItem = new OrderItemEntity();
             orderItem.setOrderEntity(order);
             orderItem.setProductEntity(product);

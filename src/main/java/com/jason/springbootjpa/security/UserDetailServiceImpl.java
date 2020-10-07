@@ -44,6 +44,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
             return new User(admin.getUsername(), admin.getPassword(), authorities);
         } else {
             Optional<BuyerEntity> opBuyer = buyerRepository.findByUsername(name);
+            if(opBuyer.isEmpty()) throw new UsernameNotFoundException("User account with " + name + " does not exist.");
             BuyerEntity buyer = opBuyer.get();
             List<GrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority("ROLE_BUYER"));
