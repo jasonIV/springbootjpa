@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:11-jdk
 
 RUN mkdir /var/circleci-with-springboot
 
