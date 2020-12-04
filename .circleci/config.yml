@@ -6,7 +6,7 @@ orbs:
 jobs:
   build_and_deploy:
     docker:
-      - image: circleci/openjdk:8-jdk
+      - image: circleci/openjdk:11-jdk
 
     steps:
       - checkout
