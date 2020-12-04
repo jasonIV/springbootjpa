@@ -55,7 +55,7 @@ workflows:
   build-deploy-qa:
     jobs:
       - build_and_deploy
-      - update
+      - update:
          requires:
           - build_and_deploy
 
