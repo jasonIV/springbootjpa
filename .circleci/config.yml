@@ -50,7 +50,7 @@ jobs:
       - run:
           name: Force Update Existing Service
           command: |
-              aws ecs update-service --cluster ecs-cluster --service circleci-ecs-service --force-new-deployment
+              aws ecs update-service --cluster devthamardaw --service circleci-ecs-service --force-new-deployment
 workflows:
   build-deploy-qa:
     jobs:
