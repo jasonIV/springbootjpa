@@ -36,9 +36,25 @@ jobs:
             eval $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
             docker push $FULL_IMAGE_NAME
         
+  update:
+    docker:
+      - image: circleci/openjdk:11-jdk
+    steps:
+      - run:
+          name: Install dependencies for AWS
+          command: |
+            sudo apt-get update
+            sudo apt-get -y -qq install awscli
+            sudo apt-get install python3-pip
+            sudo pip3 install --upgrade awscli
+      - run:
+          name: Force Update Existing Service
+          command: |
+              aws ecs update-service --cluster ecs-cluster --service circleci-ecs-service --force-new-deployment
 workflows:
   build-deploy-qa:
     jobs:
       - build_and_deploy
+      - update
 
 
